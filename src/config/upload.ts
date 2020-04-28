@@ -10,7 +10,7 @@ export default{
       const filename = `${fileHash} - ${file.originalname}`;
 
       return callback(null, filename);
-    } 
+    },
 
   }),
 }
