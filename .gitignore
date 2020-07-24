@@ -3,6 +3,7 @@
 .vscode/
 build/
 temp/
+/.vscode
 
 tmp/*
 !tmp/.gitkeep
