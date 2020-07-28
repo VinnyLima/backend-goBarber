@@ -1,10 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import 'express-async-errors';
 import routes from './routes';
-import uploadConfigs from '../../../config/upload';
+import uploadConfigs from '@config/upload';
 import 'reflect-metadata';
-import '../typeorm';
-import AppError from '../../errors/AppError';
+import '@shared/infra/typeorm';
+import AppError from '@shared/errors/AppError';
+
 
 const app = express();
 app.use(express.json());
