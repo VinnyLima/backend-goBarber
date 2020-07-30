@@ -3,7 +3,7 @@ import { hash } from 'bcrypt';
 import User from '../infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 
-interface Request {
+interface IRequest {
   name: string;
   email: string;
   password: string;

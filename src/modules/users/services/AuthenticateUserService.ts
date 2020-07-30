@@ -5,12 +5,12 @@ import User from '../infra/typeorm/entities/User';
 import authJWT from '@config/auth';
 import AppError from '@shared/errors/AppError';
 
-interface Request {
+interface IRequest {
   email: string;
   password: string;
 }
 
-interface Response {
+interface IResponse {
   user: User;
   token: string;
 }

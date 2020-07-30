@@ -23,12 +23,11 @@ class CreateAppointmentService {
       throw new AppError('Exists appointment', 400);
     }
 
-    const appointment = appointmentsRepository.create({
+    const appointment = await appointmentsRepository.create({
       date: appointmentDate,
       provider_id,
     });
 
-    await appointmentsRepository.save(appointment);
 
     return appointment;
   }
