@@ -1,9 +1,9 @@
-import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
-import User from '../infra/typeorm/entities/User';
 import authJWT from '@config/auth';
 import AppError from '@shared/errors/AppError';
+import User from '../infra/typeorm/entities/User';
+import IUserRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
   email: string;
@@ -16,10 +16,10 @@ interface IResponse {
 }
 
 class AuthenticateUserService {
-  public async execute({ email, password }: Request): Promise<Response> {
-    const usersRepository = getRepository(User);
+  constructor(private usersRepository: IUserRepository) {}
 
-    const user = await usersRepository.findOne({ where: { email } });
+  public async execute({ email, password }: IRequest): Promise<IResponse> {
+    const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError('Email ou Senha incorretos tente novamente', 401);
