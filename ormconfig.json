@@ -6,7 +6,7 @@
   "password":"P@ssw0rd",
   "database":"goStack_gobarber",
   "entities":[
-    "./src/models/**/infra/typeorm/entities/*.ts"
+    "./src/modules/**/infra/typeorm/entities/*.ts"
   ],
   "migrations":[
     "./src/shared/infra/typeorm/migrations/*.ts"
