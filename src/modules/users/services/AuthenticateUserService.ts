@@ -1,10 +1,10 @@
 import { sign } from 'jsonwebtoken';
-import { compare } from 'bcrypt';
 import authJWT from '@config/auth';
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
 import User from '../infra/typeorm/entities/User';
 import IUserRepository from '../repositories/IUsersRepository';
+import IHashProvider from '../providers/HashProvider/models/IHashProviders';
 
 interface IRequest {
   email: string;
@@ -21,6 +21,9 @@ class AuthenticateUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUserRepository,
+
+    @inject('HashProvider')
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute({ email, password }: IRequest): Promise<IResponse> {
@@ -30,7 +33,10 @@ class AuthenticateUserService {
       throw new AppError('Email ou Senha incorretos tente novamente', 401);
     }
 
-    const passwordMatch = await compare(password, user.password);
+    const passwordMatch = await this.hashProvider.compareHash(
+      password,
+      user.password,
+    );
 
     if (!passwordMatch) {
       throw new AppError('Email ou Senha incorretos tente novamente', 401);
