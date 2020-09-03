@@ -1,11 +1,13 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Raw } from 'typeorm';
 
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import IFindAllInMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO';
+import IFindAllInDayFromProviderDTO from '@modules/appointments/dtos/IFindAllInDayFromProviderDTO ';
 
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
 import Appointment from '../entities/Appointments';
 
-class AppointmentsREpository implements IAppointmentsRepository {
+class AppointmentsRepository implements IAppointmentsRepository {
   private ormRepository: Repository<Appointment>;
 
   constructor() {
@@ -20,6 +22,48 @@ class AppointmentsREpository implements IAppointmentsRepository {
     return findAppointment || undefined;
   }
 
+  public async finAllInMonthFromProvider({
+    provider_id,
+    month,
+    year,
+  }: IFindAllInMonthFromProviderDTO): Promise<Appointment[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+
+    const appointment = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `to_char(${dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`,
+        ),
+      },
+    });
+
+    return appointment;
+  }
+
+  public async finAllInDayFromProvider({
+    provider_id,
+    month,
+    year,
+    day,
+  }: IFindAllInDayFromProviderDTO): Promise<Appointment[]> {
+    const parsedDay = String(day).padStart(2, '0');
+    const parsedMonth = String(month).padStart(2, '0');
+
+    const appointment = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `to_char(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`,
+        ),
+      },
+    });
+
+    return appointment;
+  }
+
   public async create({
     provider_id,
     date,
@@ -32,4 +76,4 @@ class AppointmentsREpository implements IAppointmentsRepository {
   }
 }
 
-export default AppointmentsREpository;
+export default AppointmentsRepository;

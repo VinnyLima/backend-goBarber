@@ -1,11 +1,13 @@
 import { uuid } from 'uuidv4';
-import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
-import { isEqual } from 'date-fns';
+import { isEqual, getMonth, getYear, getDate } from 'date-fns';
 
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import IFindAllInMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO';
+import IFindAllInDayFromProviderDTO from '@modules/appointments/dtos/IFindAllInDayFromProviderDTO ';
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO';
 import Appointment from '../../infra/typeorm/entities/Appointments';
 
-class AppointmentsREpository implements IAppointmentsRepository {
+class AppointmentsRepository implements IAppointmentsRepository {
   private appointments: Appointment[] = [];
 
   public async findByDate(date: Date): Promise<Appointment | undefined> {
@@ -14,6 +16,40 @@ class AppointmentsREpository implements IAppointmentsRepository {
     );
 
     return findAppointment;
+  }
+
+  public async finAllInMonthFromProvider({
+    provider_id,
+    month,
+    year,
+  }: IFindAllInMonthFromProviderDTO): Promise<Appointment[]> {
+    const Appointments = this.appointments.filter(appointment => {
+      return (
+        appointment.provider_id === provider_id &&
+        getMonth(appointment.date) + 1 === month &&
+        getYear(appointment.date) === year
+      );
+    });
+
+    return Appointments;
+  }
+
+  public async finAllInDAyFromProvider({
+    provider_id,
+    day,
+    month,
+    year,
+  }: IFindAllInDayFromProviderDTO): Promise<Appointment[]> {
+    const Appointments = this.appointments.filter(appointment => {
+      return (
+        appointment.provider_id === provider_id &&
+        getDate(appointment.date) === day &&
+        getMonth(appointment.date) + 1 === month &&
+        getYear(appointment.date) === year
+      );
+    });
+
+    return Appointments;
   }
 
   public async create({
@@ -30,4 +66,4 @@ class AppointmentsREpository implements IAppointmentsRepository {
   }
 }
 
-export default AppointmentsREpository;
+export default AppointmentsRepository;
