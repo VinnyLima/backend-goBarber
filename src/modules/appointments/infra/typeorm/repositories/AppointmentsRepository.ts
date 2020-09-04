@@ -22,7 +22,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
     return findAppointment || undefined;
   }
 
-  public async finAllInMonthFromProvider({
+  public async findAllInMonthFromProvider({
     provider_id,
     month,
     year,
@@ -42,7 +42,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
     return appointment;
   }
 
-  public async finAllInDayFromProvider({
+  public async findAllInDayFromProvider({
     provider_id,
     month,
     year,
@@ -66,9 +66,14 @@ class AppointmentsRepository implements IAppointmentsRepository {
 
   public async create({
     provider_id,
+    user_id,
     date,
   }: ICreateAppointmentDTO): Promise<Appointment> {
-    const appointment = this.ormRepository.create({ provider_id, date });
+    const appointment = this.ormRepository.create({
+      provider_id,
+      user_id,
+      date,
+    });
 
     await this.ormRepository.save(appointment);
 
